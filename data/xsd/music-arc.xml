@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ********************************************************************** -->
+<music-arc 
+	xmlns:files="http://www.mmbros.it/xml/files"
+	xmlns:e="http://www.mmbros.it/html/ent"
+>
+<!-- ********************************************************************** -->
+<files:include match="artist-list.xml" />
+<!-- ********************************************************************** -->
+<album-list>
+	<files:include match="album/*.xml" />
+</album-list>
+<!-- ********************************************************************** -->
+<playlist-list>
+	<files:include match="playlist/*.xml" />
+</playlist-list>
+<!-- ********************************************************************** -->
+</music-arc>

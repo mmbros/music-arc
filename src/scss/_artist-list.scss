@@ -1,0 +1,37 @@
+// ***************************************************************
+// .artist-list
+//   &__nav
+//   &__list
+//   &__letter
+// ***************************************************************
+
+.artist-list {
+
+  &__nav {
+    display: block;
+    list-style-type: none;
+    li {
+      display: inline;
+    }
+  }
+
+  &__list {
+    list-style-type: none;
+    height: 500px;
+    overflow-y: scroll;
+    background-color: lighten($backcolor, 10%);  // debug
+
+    small {
+      padding-left: .5rem;
+      color: $hicolor;
+    }
+  }
+
+  &__letter {
+    color: gold;
+    font-size: 150%;
+    left: -1em;
+    position: relative;
+  }
+
+}

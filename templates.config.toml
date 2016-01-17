@@ -1,0 +1,30 @@
+# templates configuration file (TOML)
+
+output_file = "templates/templates.go"
+package_name = "templates"
+
+# folder = "/home/mau/Code/go/src/github.com/mmbros/music-arc/templates"
+folder = "templates/music-arc"
+
+# page_enum_type = "PageEnum"
+page_enum_prefix = "Page"
+# page_enum_suffix = "Suffix"
+
+# name of the variable used as funcMap.
+# The variable must be defined in another file of the same package (es. "templates/func-map.go")
+# in not defined or blank, no funcMap will be used
+func_map = "funcMap"
+
+[templates]
+base = ["base.tmpl"]
+album = ["base", "album.tmpl"]
+album_list = ["base", "album-list.tmpl"]
+artist = ["base", "artist.tmpl"]
+artist_list = ["base", "artist-list.tmpl"]
+
+
+[pages]
+Album = {template="album"}
+AlbumList = {template="album_list"}
+Artist = {template="artist"}
+ArtistList = {template="artist_list"}

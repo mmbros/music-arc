@@ -1,0 +1,38 @@
+{{define "content"}}
+  {{ template "artist" . }}
+  {{ template "artist-albums" .Albums }}
+{{ end }}
+
+
+{{define "artist"}}
+<ul>
+  <li><b>{{.Name}}</b></li>
+  <li>Sort Name: {{.SortName}}</li>
+  <li>Begin Date: {{.BeginDate}}</li>
+  <li>End Date: {{.EndDate}}</li>
+  <li>Country: {{.Country}}</li>
+  <li>Type: {{.Type}}</li>
+</ul>
+{{end}}
+
+{{define "artist-albums"}}
+  <table class="album-list">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Title</th>
+        <th>Year</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range $key, $album := . }}
+        <tr>
+          <td>{{ if .Imgs }}<a href="/albums/{{$album.ID}}"><img src="/img/album/{{index .Imgs 0}}" alt="{{index .Imgs 0}}" style="width:64px;height:64px;" /></a>{{ end }}</td>
+          <td><a href="/albums/{{$album.ID}}">{{$album.Title}}</a></td>
+          <td>{{$album.Year}}</td>
+        </tr>
+      {{ end }}
+
+    </tbody>
+  </table>
+{{end}}

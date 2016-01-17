@@ -1,0 +1,34 @@
+{{define "content"}}
+<div class="artist-list">
+{{ template "artist-list__title" . }}
+{{ template "artist-list__nav"   . }}
+{{ template "artist-list__list"  . }}
+</div>
+{{ end }}
+
+{{define "artist-list__title"}}
+<h3>Artisti</h3>
+{{ end }}
+
+{{define "artist-list__nav"}}
+<ul class="artist-list__nav">
+{{ $firstchar := NewFirstChar}}
+{{ range $idx, $artist := .Artists.List }}
+{{ if $firstchar.NotEqual $artist.SortName }}
+<li><a href="#artists-letter_{{$firstchar}}">{{$firstchar}}</a></li>
+{{end}}
+{{end}}
+</ul>
+{{end}}
+
+{{define "artist-list__list"}}
+<ul class="artist-list__list">
+{{ $firstchar := NewFirstChar}}
+{{ range $idx, $artist := .Artists.List }}{{/*
+*/}}{{ if $firstchar.NotEqual $artist.SortName }}
+<li class="artist-list__letter" id="artists-letter_{{$firstchar}}">{{$firstchar}}</li>{{/*
+*/}}{{end}}
+<li><a href="/artists/{{$artist.ID}}">{{ $artist.SortName }}</a><small>({{len $artist.Albums}})</small></li>{{/*
+*/}}{{ end }}
+</ul>
+{{end}}

@@ -1,0 +1,31 @@
+{{define "content"}}
+<h1>Elenco degli Album</h1>
+  {{ template "album-list" . }}
+{{ end }}
+
+
+{{define "album-list"}}
+  <table class="album-list">
+    <thead>
+      <tr>
+        <th>Album Title</th>
+        <th>Artist</th>
+        <th>Duration</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range $key, $album := .Albums }}
+        <tr>
+          <td><a href="/albums/{{$key}}">{{$album.Title}}</a></td>
+          <td>
+            {{ range $idx, $artistRef := .ArtistRefs }}
+              {{if gt $idx 1}}, {{end}}<a href="/artists/{{$artistRef.ArtistID}}">{{$artistRef.Name}}</a>
+            {{ end }}
+          </td>
+          <td>{{$album.Duration}}</td>
+        </tr>
+      {{ end }}
+
+    </tbody>
+  </table>
+{{end}}

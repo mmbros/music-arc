@@ -1,0 +1,20 @@
+{
+  "name": "music-arc",
+  "version": "1.0.0",
+  "description": "Music archive viewer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.11.0",
+    "del": "^2.2.0",
+    "glob": "^6.0.4",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-sass": "^2.1.1",
+    "gulp-sourcemaps": "^1.6.0"
+  }
+}

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	attributeFormDefault="unqualified"
+	elementFormDefault="unqualified"
+>
+<!-- ****************************************************************** -->
+
+<xs:include schemaLocation="countryName.xsd" />
+
+<!-- ****************************************************************** -->
+
+<xs:element name="music-arc" type="tp_MusicArc">
+	<xs:key name="pk_Artist">
+    		<xs:selector xpath="artist-list/artist" />
+		<xs:field xpath="@id" />
+	</xs:key>
+	<xs:key name="pk_Album">
+    		<xs:selector xpath="album-list/album" />
+		<xs:field xpath="@id" />
+	</xs:key>
+	<xs:keyref name="fk_AlbumArtist" refer="pk_Artist">
+    		<xs:selector xpath="album-list/album/artist-ref" />
+    		<xs:field xpath="." />
+  	</xs:keyref>
+	<xs:keyref name="fk_PlayListAlbum" refer="pk_Album">
+    		<xs:selector xpath="playlist-list/playlist/list/album-ref" />
+    		<xs:field xpath="." />
+  	</xs:keyref>
+</xs:element>
+
+<!-- ****************************************************************** -->
+<xs:complexType name="tp_MusicArc">
+	<xs:sequence>
+		<xs:element name="artist-list" type="tp_ArtistList" />
+		<xs:element name="album-list" type="tp_AlbumList" />
+		<xs:element name="playlist-list" type="tp_PlayListList" />
+	</xs:sequence>
+</xs:complexType>
+<!-- ****************************************************************** -->
+<xs:complexType name="tp_ArtistList">
+	<xs:sequence>
+		<xs:element name="artist" type="tp_Artist" maxOccurs="unbounded" />
+	</xs:sequence>
+</xs:complexType>
+<!-- ****************************************************************** -->
+<xs:complexType name="tp_Artist">
+	<xs:sequence>
+		<xs:element name="name" type="xs:string" />
+		<xs:element name="sortName" type="xs:string" />
+		<xs:element name="beginDate" type="tp_Date" minOccurs="0" />
+		<xs:element name="endDate" type="tp_Date" minOccurs="0" />
+	</xs:sequence>
+	<xs:attribute name="id" type="xs:token" use="required" />
+	<xs:attribute name="country" type="tp_Country" />
+	<xs:attribute name="type" type="tp_ArtistType" />
+</xs:complexType>
+<!-- ****************************************************************** -->
+<xs:complexType name="tp_ArtistRef">
+	<xs:simpleContent>
+		<xs:extension base="xs:string">
+			<xs:attribute name="role" type="tp_ArtistRole" default="default" />
+		</xs:extension>
+	</xs:simpleContent>
+</xs:complexType>
+<!-- ****************************************************************** -->
+<xs:complexType name="tp_AlbumList">
+	<xs:sequence>
+		<xs:element name="album" type="tp_Album" maxOccurs="unbounded" />
+	</xs:sequence>
+</xs:complexType>
+<!-- ****************************************************************** -->
+<xs:group name="grp_Artist">
+	<xs:sequence>
+		<xs:element name="artist-display"  type="tp_EntString" minOccurs="0" />
+		<xs:element name="artist-ref"      type="tp_ArtistRef" minOccurs="0" maxOccurs="unbounded" />
+	</xs:sequence>
+</xs:group>
+<!-- ****************************************************************** -->
+<xs:group name="grp_TitleArtist">
+	<xs:sequence>
+		<xs:element name="title" type="tp_EntString" />
+		<xs:group ref="grp_Artist" />
+	</xs:sequence>
+</xs:group>
+<!-- ****************************************************************** -->
+
+<xs:complexType name="tp_Album">
+	<xs:sequence>
+		<xs:group ref="grp_TitleArtist" />
+		<xs:element name="date"            type="tp_Date" minOccurs="0" />
+		<xs:element name="duration"        type="tp_Duration" minOccurs="0" />
+		<xs:element name="img"             type="xs:anyURI" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element name="track-list"      type="tp_TrackList" minOccurs="0" maxOccurs="unbounded" />
+	</xs:sequence>
+	<xs:attribute name="id" type="xs:token" use="required" />
+</xs:complexType>
+<!-- ****************************************************************** -->
+<xs:complexType name="tp_TrackList">
+	<xs:sequence>
+		<xs:element name="title" type="tp_EntString" minOccurs="0" />
+		<xs:group ref="grp_Artist" />
+		<xs:element name="duration" type="tp_Duration" minOccurs="0" />
+		<xs:element name="track" type="tp_Track" maxOccurs="unbounded" />
+	</xs:sequence>
+	<xs:attribute name="show-artist" type="xs:boolean" default="false" />
+</xs:complexType>
+<!-- ****************************************************************** -->
+<xs:complexType name="tp_Track">
+	<xs:sequence>
+		<xs:element name="title" type="tp_EntString" />
+		<xs:group ref="grp_Artist" />
+		<xs:element name="duration" type="tp_Duration" minOccurs="0" />
+	</xs:sequence>
+</xs:complexType>
+<!-- ****************************************************************** -->
+<xs:complexType name="tp_PlayListList">
+	<xs:sequence>
+		<xs:element name="playlist" type="tp_PlayList" maxOccurs="unbounded" />
+	</xs:sequence>
+</xs:complexType>
+<!-- ****************************************************************** -->
+<xs:complexType name="tp_PlayList">
+	<xs:sequence>
+		<xs:element name="title"      type="tp_EntString" />
+		<xs:element name="creator"    type="tp_PlayListCreator" />
+		<xs:element name="date"       type="tp_Date" minOccurs="0" />
+		<xs:element name="duration"   type="tp_Duration" minOccurs="0" />
+		<xs:element name="list">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="album-ref" type="xs:string" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+<!--
+<xs:element name="list">
+			<xs:complexType>
+					<xs:choice maxOccurs="unbounded" >
+						<xs:element name="album-ref" type="xs:string" />
+						<xs:element name="compilation" type="xs:string" />
+					</xs:choice>
+			</xs:complexType>
+		</xs:element>
+-->
+	</xs:sequence>
+	<xs:attribute name="id"    type="xs:token" use="required" />
+	<xs:attribute name="type"  type="tp_PlayListType" use="required" />
+	<xs:attribute name="style" type="xs:token" />
+</xs:complexType>
+<!-- ****************************************************************** -->
+<!-- ****************************************************************** -->
+<!-- ****************************************************************** -->
+
+
+<xs:complexType name="tp_EntString" mixed="true">
+	<xs:sequence>
+		<xs:any namespace="http://www.mmbros.it/html/ent"
+			minOccurs="0"
+			maxOccurs="unbounded"
+			processContents="skip" />
+	</xs:sequence>
+</xs:complexType>
+<!--
+<xs:simpleType name="tp_EntString">
+	<xs:restriction base="xs:string" />
+</xs:simpleType>
+-->
+<!-- ****************************************************************** -->
+<xs:simpleType name="tp_Duration">
+	<xs:annotation>
+		<xs:documentation xml:lang="it">
+			Esprime una durata temporale in secondi, oppure minuti:secondi, oppure ore:minuti:secondi.
+			La durata puo' anche essere nulla, nel qual caso il match e' con *]{0}.
+				http://stackoverflow.com/questions/29416697/xsd-regular-expressions-empty-string-or-something-else
+		</xs:documentation>
+	</xs:annotation>
+	<xs:restriction base="xs:string">
+		<xs:pattern value="[*]{0}|\d+|\d+:[0-5]\d|\d+:[0-5]\d:[0-5]\d"></xs:pattern>
+	</xs:restriction>
+</xs:simpleType>
+<!-- ****************************************************************** -->
+<xs:simpleType name="tp_ArtistRole">
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="default" />
+		<xs:enumeration value="featuring" />
+		<xs:enumeration value="with" />
+	</xs:restriction>
+</xs:simpleType>
+<!-- ****************************************************************** -->
+<xs:simpleType name="tp_Date">
+	<xs:union memberTypes="xs:date xs:gYearMonth xs:gYear"/>
+</xs:simpleType>
+<!-- ****************************************************************** -->
+<xs:simpleType name="tp_PlayListCreator">
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="mmbros">
+			<xs:annotation>
+				<xs:documentation>mmbros company</xs:documentation>
+			</xs:annotation>
+		</xs:enumeration>
+	</xs:restriction>
+</xs:simpleType>
+<!-- ****************************************************************** -->
+<xs:simpleType name="tp_PlayListType">
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="CDR">
+			<xs:annotation>
+				<xs:documentation>CDR Masterizzato</xs:documentation>
+			</xs:annotation>
+		</xs:enumeration>
+		<xs:enumeration value="CDO">
+			<xs:annotation>
+				<xs:documentation>CD Originale</xs:documentation>
+			</xs:annotation>
+		</xs:enumeration>
+	</xs:restriction>
+</xs:simpleType>
+<!-- ****************************************************************** -->
+<xs:simpleType name="tp_ArtistType">
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="M">
+			<xs:annotation>
+				<xs:documentation>Uomo</xs:documentation>
+			</xs:annotation>
+		</xs:enumeration>
+		<xs:enumeration value="F">
+			<xs:annotation>
+				<xs:documentation>Donna</xs:documentation>
+			</xs:annotation>
+		</xs:enumeration>
+		<xs:enumeration value="G">
+			<xs:annotation>
+				<xs:documentation>Gruppo</xs:documentation>
+			</xs:annotation>
+		</xs:enumeration>
+	</xs:restriction>
+</xs:simpleType>
+<!-- ****************************************************************** -->
+</xs:schema>
