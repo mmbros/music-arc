@@ -12,13 +12,13 @@
 
 {{define "artist-list__nav"}}
 <ul class="artist-list__nav">
-{{ $firstchar := NewFirstChar}}
-{{ range $idx, $artist := .Artists.List }}
-{{ if $firstchar.NotEqual $artist.SortName }}
-<li><a href="#artists-letter_{{$firstchar}}">{{$firstchar}}</a></li>
-{{end}}
-{{end}}
-</ul>
+{{ $firstchar := NewFirstChar}}{{/*
+*/}}{{ range $idx, $artist := .Artists.List }}{{/*
+*/}}{{ if $firstchar.NotEqual $artist.SortName }}{{/*
+*/}}<li><a href="#artists-letter_{{$firstchar}}">{{$firstchar}}</a></li>
+{{end}}{{/*
+*/}}{{end}}{{/*
+*/}}</ul>
 {{end}}
 
 {{define "artist-list__list"}}

@@ -23,8 +23,8 @@ func CreateMusicArcInc(srcDir, destPath string) error {
 
 	if err := appendString(`
 <!DOCTYPE music-arc [
-  <!ENTITY sep    "&#x2022;"><!-- Bullet -->
-	<!ENTITY bull   "&#x2022;"><!-- Bullet -->
+  <!ENTITY sep    "&#x2022;"><!-- Sep = Bullet -->
+  <!ENTITY bull   "&#x2022;"><!-- Bullet -->
   <!ENTITY hellip "&#x2026;"><!-- Horizontal ellipsis -->
   <!ENTITY nbsp     "&#xA0;"><!-- Non-breaking space -->
 ]>

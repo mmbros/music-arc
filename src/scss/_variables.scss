@@ -2,4 +2,8 @@ $backcolor: #9C6;
 
 $textcolor: darken($backcolor, 40%);
 
-$hicolor: lighten(#9C6, 20%);
+$hicolor: lighten($backcolor, 40%);
+
+$debug-1: red;
+$debug-2: lighten($debug-1, 25%);
+$debug-0: darken($debug-1, 25%);

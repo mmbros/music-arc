@@ -1,9 +1,20 @@
+// http://struct.cc/blog/2015/05/08/building-web-applications-in-golang-with-gulp-and-livereload/
+// https://gist.github.com/squidfunk/120b6f02927fdc9ef9f1
+
 var gulp = require('gulp');
 var sass = require('gulp-sass');
+var child = require('child_process');
 var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var del = require('del');
 var browserSync = require('browser-sync').create();
+var util = require('gulp-util');
+//var notifier   = require('node-notifier');
+var sync = require('gulp-sync')(gulp).sync;
+
+//var reload  = require('gulp-livereload');
+var reload      = browserSync.reload;
+
 
 var http_port = 3000;
 var s_dir = "./src";
@@ -11,8 +22,8 @@ var d_dir = "./dist";
 
 
 var paths = {
-  bootstrap_assets: './bower_components/bootstrap-sass/assets' ,
-  jquery_assets: './bower_components/jquery/dist' ,
+  bootstrap: './bower_components/bootstrap-sass/assets' ,
+  jquery: './bower_components/jquery/dist' ,
 
   sass: {
     watch: [s_dir + '/scss/**/*.{scss,sass}'],
@@ -76,16 +87,16 @@ js/bootstrap-typeahead.js
  */
 gulp.task('js-bootstrap', function() {
   return gulp.src([
-      paths.bootstrap_assets + '/javascripts/bootstrap.js',
-      paths.bootstrap_assets + '/javascripts/bootstrap.min.js'
+      paths.bootstrap + '/javascripts/bootstrap.js',
+      paths.bootstrap + '/javascripts/bootstrap.min.js'
     ])
     .pipe(gulp.dest(paths.js.dest));
 });
 
 gulp.task('js-jquery', function() {
   return gulp.src([
-      paths.jquery_assets + '/jquery.js',
-      paths.jquery_assets + '/jquery.min.js'
+      paths.jquery + '/jquery.js',
+      paths.jquery + '/jquery.min.js'
     ])
     .pipe(gulp.dest(paths.js.dest));
 });
@@ -96,7 +107,7 @@ gulp.task('js', ['js-jquery', 'js-bootstrap']);
  * FONT
  */
 gulp.task('font-bootstrap', function() {
-  return gulp.src(paths.bootstrap_assets + '/fonts/**/*.*')
+  return gulp.src(paths.bootstrap + '/fonts/**/*.*')
     .pipe(gulp.dest(paths.font.dest));
 });
 
@@ -120,19 +131,23 @@ gulp.task('img', function() {
  gulp.task('static', ['font', 'js', 'img']);
 
 
+ /* ----------------------------------------------------------------------------
+  * Assets pipeline
+  * ------------------------------------------------------------------------- */
+
 /**
  * SASS
  * With includePaths option our main style.scss can import bootstrap easily. Here is an example:
  *    @import "bootstrap";
  */
 
-gulp.task('sass', function() {
+gulp.task('assets:stylesheets', function() {
   return gulp.src(paths.sass.src)
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(sass({
       includePaths: [
         paths.sass.src,
-        paths.bootstrap_assets + '/stylesheets'
+        paths.bootstrap + '/stylesheets'
       ]
     }).on('error', sass.logError))
     .pipe(autoprefixer())
@@ -153,13 +168,157 @@ gulp.task('html', function() {
     .pipe(browserSync.stream({match: '**/*.html'}));
 });
 
+/*
+ * Build assets.
+ */
+gulp.task('assets:build', [
+  'assets:stylesheets'
+]);
+
+/*
+ * Watch assets for changes and rebuild on the fly.
+ */
+gulp.task('assets:watch', function() {
+
+  /* Rebuild stylesheets on-the-fly */
+  gulp.watch([
+    'src/scss/**/*.{sass,scss}'
+  ], ['assets:stylesheets']);
+
+});
+
+ /* ----------------------------------------------------------------------------
+  * GO Application
+  * ------------------------------------------------------------------------- */
+
+ /* Application server */
+ var server = null;
+
+/*
+ * Build application server.
+ */
+gulp.task('server:build', function() {
+  var build = child.spawnSync('go', ['install']);
+  if (build.stderr.length) {
+    var lines = build.stderr.toString()
+      .split('\n').filter(function(line) {
+        return line.length
+      });
+    for (var l in lines)
+      util.log(util.colors.red(
+        'Error (go install): ' + lines[l]
+      ));
+/*
+    notifier.notify({
+      title: 'Error (go install)',
+      message: lines
+    });
+*/
+  }
+  return build;
+});
+
+/*
+ * Restart application server.
+ */
+gulp.task('server:spawn', function() {
+  if (server){
+    util.log('stopping server...');
+    server.kill();
+  }
+
+  /* Spawn application server */
+  util.log('starting server...');
+  server = child.spawn('music-arc');
+
+  /* Trigger reload upon server start */
+/*
+  server.stdout.once('data', function() {
+    // reload.reload('/');
+    reload();
+  });
+*/
+  /* Pretty print server log output */
+  server.stdout.on('data', function(data) {
+    var lines = data.toString().split('\n')
+    for (var l in lines)
+      if (lines[l].length)
+        util.log(lines[l]);
+  });
+
+  /* Print errors to stdout */
+  server.stderr.on('data', function(data) {
+    process.stdout.write(data.toString());
+  });
+});
+
+
+/*
+ * Watch source for changes and restart application server.
+ */
+gulp.task('server:watch', function() {
+
+  /* Restart application server */
+  gulp.watch([
+    'templates/**/*.tmpl',
+    'data/music-arc-inc.xml'
+  ], ['server:spawn']);
+
+  /* Rebuild and restart application server */
+  gulp.watch([
+    '*/**/*.go',
+  ], sync([
+    'server:build',
+    'server:spawn'
+  ], 'server'));
+});
+
+
+
+/* ----------------------------------------------------------------------------
+ * Interface
+ * ------------------------------------------------------------------------- */
+
+/*
+ * Build assets and application server.
+ */
+gulp.task('build', [
+  'assets:build',
+  'server:build'
+]);
+
+
+/*
+ * Start asset and server watchdogs and initialize livereload.
+ */
+gulp.task('watch', [
+  'assets:build',
+  'server:build'
+], function() {
+
+//  reload.listen();
+
+  browserSync.init();
+
+
+  return gulp.start([
+    'assets:watch',
+    'server:watch',
+    'server:spawn'
+  ]);
+});
+
+/*
+ * Build assets by default.
+ */
+gulp.task('default', ['build']);
 
 /**
  * SERVE
  */
 
 // Static Server + watching scss/html files
-gulp.task('serve', ['sass', 'html'], function() {
+gulp.task('serve__OLD', ['sass', 'html'], function() {
 
     browserSync.init({
       // Serve files from the app directory, with a specific index filename
@@ -174,9 +333,3 @@ gulp.task('serve', ['sass', 'html'], function() {
 //    gulp.watch(paths.html.watch).on('change', browserSync.reload);
     gulp.watch(paths.html.watch, ['html']);
 });
-
-/**
- * DEFAULT
- */
-
- gulp.task('default',  ['serve']);
