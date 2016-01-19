@@ -188,14 +188,14 @@ gulp.task('assets:watch', function() {
 });
 
  /* ----------------------------------------------------------------------------
-  * GO Application
+  * GO
   * ------------------------------------------------------------------------- */
 
- /* Application server */
+ /* GO Application server */
  var server = null;
 
 /*
- * Build application server.
+ * Build application server: go install
  */
 gulp.task('server:build', function() {
   var build = child.spawnSync('go', ['install']);
@@ -219,16 +219,32 @@ gulp.task('server:build', function() {
 });
 
 /*
+ * Create source files: go generate
+ */
+gulp.task('server:generate', function() {
+  var build = child.spawnSync('go', ['generate']);
+  if (build.stderr.length) {
+    var lines = build.stderr.toString()
+      .split('\n').filter(function(line) {
+        return line.length
+      });
+    for (var l in lines)
+      util.log(util.colors.red(
+        'Error (go generate): ' + lines[l]
+      ));
+  }
+  return build;
+});
+
+/*
  * Restart application server.
  */
 gulp.task('server:spawn', function() {
   if (server){
-    util.log('stopping server...');
     server.kill();
   }
 
   /* Spawn application server */
-  util.log('starting server...');
   server = child.spawn('music-arc');
 
   /* Trigger reload upon server start */
@@ -271,6 +287,11 @@ gulp.task('server:watch', function() {
     'server:build',
     'server:spawn'
   ], 'server'));
+
+  /* Re Generate source files */
+  gulp.watch([
+    'templates.config.toml',
+  ], ['server:generate']);
 });
 
 
@@ -284,6 +305,7 @@ gulp.task('server:watch', function() {
  */
 gulp.task('build', [
   'assets:build',
+  'server:generate',
   'server:build'
 ]);
 

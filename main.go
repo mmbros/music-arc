@@ -16,6 +16,12 @@ const urlPrefixArtists = "/artists/"
 
 var gMA *model.MusicArc
 
+// PageData is
+type PageData struct {
+	MusicArc *model.MusicArc
+	Artist   *model.Artist
+}
+
 func viewAlbumHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s: %s\n", r.Method, r.URL.Path)
 
@@ -45,11 +51,13 @@ func viewAlbumHandler(w http.ResponseWriter, r *http.Request) {
 func viewArtistHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s: %s\n", r.Method, r.URL.Path)
 
+	data := PageData{MusicArc: gMA}
+
 	id := r.URL.Path[len(urlPrefixArtists):]
 
 	if len(id) == 0 {
 		p := templates.PageArtistList
-		if err := p.Execute(w, &gMA); err != nil {
+		if err := p.Execute(w, &data); err != nil {
 			panic(err)
 		}
 		return
@@ -61,8 +69,10 @@ func viewArtistHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	data.Artist = artist
+
 	p := templates.PageArtist
-	if err := p.Execute(w, &artist); err != nil {
+	if err := p.Execute(w, &data); err != nil {
 		panic(err)
 	}
 }
