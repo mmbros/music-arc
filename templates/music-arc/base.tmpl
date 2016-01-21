@@ -9,11 +9,10 @@
 </head>
 <body>
 {{ template "header" . }}
-<main>
+<main class="l-content">
 {{ template "content" . }}
 </main>
-{{ template "footer" . }}
-{{ template "browser-sync" . }}
+{{ template "footer" . }}{{ template "browser-sync" . }}
 </body>
 </html>
 
@@ -26,7 +25,7 @@
 {{end}}
 
 {{define "footer"}}
-<footer><b>mm</b>bros &copy; 2016</footer>
+<footer class="l-footer"><b>mm</b>bros &copy; 2016</footer>
 {{end}}
 
 {{define "browser-sync"}}

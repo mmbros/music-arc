@@ -1,9 +1,11 @@
-$backcolor: #9C6;
+$color-text:  black;
+$color-back:  lightblue;
+$color-title: white;
 
-$textcolor: darken($backcolor, 40%);
+$color-text-back:  mix($color-text, $color-back);
+$color-title-back: mix($color-title, $color-back);
 
-$hicolor: lighten($backcolor, 40%);
 
-$debug-1: red;
-$debug-2: lighten($debug-1, 25%);
-$debug-0: darken($debug-1, 25%);
+$container-border-width: 4px;
+$container-border-radius: 6px;
+$container-padding: 4px;

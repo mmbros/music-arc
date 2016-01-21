@@ -1,8 +1,8 @@
 {{define "content"}}
-<div class="master">
-  {{ template "artist-list" .MusicArc.Artists.List }}
+<div class="l-master">
+  {{ template "artists-list" .MusicArc.Artists.List }}
 </div>
-<div class="detail">
+<div class="l-detail">
   {{ template "artist" .Artist }}
 </div>
 {{ end }}

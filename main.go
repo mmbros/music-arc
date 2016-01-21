@@ -56,7 +56,7 @@ func viewArtistHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Path[len(urlPrefixArtists):]
 
 	if len(id) == 0 {
-		p := templates.PageArtistList
+		p := templates.PageArtistsList
 		if err := p.Execute(w, &data); err != nil {
 			panic(err)
 		}

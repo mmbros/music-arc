@@ -1,31 +1,10 @@
 @import 'variables';
-@import 'artist-list';
-
-// ***************************************************************
-// common
-// ***************************************************************
-
-body {
-  background-color: $backcolor;
-  color: $textcolor;
-  font-family: verdana,tahoma,sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-a {
-  color: $textcolor;
-  text-decoration: none;
-
-  &:hover, &:active {
-    color: $hicolor;
-    text-decoration: underline;
-  }
-}
-
-.l-header {
-  background-color: gray;
-}
+@import 'mixins';
+@import 'reset';
+@import 'base';
+@import 'layout';
+@import 'artists-list';
+@import 'artist';
 
 
 // ***************************************************************
