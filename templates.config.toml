@@ -16,7 +16,7 @@ page_enum_prefix = "Page"
 func_map = "funcMap"
 
 [templates]
-base = ["base.tmpl", "partials/artists-list.tmpl", "partials/artist.tmpl"]
+base = ["base.tmpl", "partials/artists-list.tmpl", "partials/artist.tmpl", "partials/album.tmpl"]
 album = ["base", "album.tmpl"]
 album_list = ["base", "album-list.tmpl"]
 artist = ["base", "artist.tmpl"]

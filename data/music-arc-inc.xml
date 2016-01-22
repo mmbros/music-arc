@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE music-arc [
-  <!ENTITY sep    "&#x2022;"><!-- Bullet -->
-	<!ENTITY bull   "&#x2022;"><!-- Bullet -->
+  <!ENTITY sep    "&#x2022;"><!-- Sep = Bullet -->
+  <!ENTITY bull   "&#x2022;"><!-- Bullet -->
   <!ENTITY hellip "&#x2026;"><!-- Horizontal ellipsis -->
   <!ENTITY nbsp     "&#xA0;"><!-- Non-breaking space -->
 ]>
@@ -19212,6 +19212,7 @@ Veloso, Caetano
 <album id="xtc_go_2">
 	<title>Go 2</title>
 	<artist-ref>xtc</artist-ref>
+	<date>1978-10-06</date>
 	<img>xtc_go_2.jpg</img>
 	<track-list>
 		<track><title>Meccanic Dancing (Oh We Go!)</title>

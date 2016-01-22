@@ -20,10 +20,13 @@ var gMA *model.MusicArc
 type PageData struct {
 	MusicArc *model.MusicArc
 	Artist   *model.Artist
+	Album    *model.Album
 }
 
 func viewAlbumHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s: %s\n", r.Method, r.URL.Path)
+
+	data := PageData{MusicArc: gMA}
 
 	id := r.URL.Path[len(urlPrefixAlbums):]
 
@@ -41,8 +44,11 @@ func viewAlbumHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	data.Album = album
+	data.Artist = album.ArtistRefs[0].Artist
+
 	p := templates.PageAlbum
-	if err := p.Execute(w, &album); err != nil {
+	if err := p.Execute(w, &data); err != nil {
 		panic(err)
 	}
 
@@ -89,7 +95,7 @@ func create() {
 func main() {
 	var err error
 
-	//	create()
+	create()
 
 	gMA, err = model.LoadFromXMLFile("data/music-arc-inc.xml")
 	if err != nil {

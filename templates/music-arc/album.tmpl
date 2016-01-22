@@ -1,89 +1,10 @@
 {{define "content"}}
-  {{ template "album" . }}
-{{ end }}{{/* END DEFINE */}}
-
-
-{{define "album"}}
-{{ template "album-header" . }}
-{{ template "album-images" .Imgs }}
-{{ template "tracklists" . }}
-{{ end }}{{/* END DEFINE */}}
-
-
-{{define "album-images"}}
-{{if .}}
-<div class="album-images">
-{{range $idx, $img := .}}
-  <a href="/img/album/{{$img}}">
-    <img src="/img/album/{{$img}}" title="{{$img}}" />
-  </a>
-{{end}}
+<div class="l-master">
+  {{ template "artist" .Artist }}
 </div>
-{{end}}
-{{ end }}{{/* END DEFINE */}}
+<div class="l-detail">
+  {{ template "album" .Album }}
+</div>
+{{ end }}
 
-
-{{define "album-header"}}
-<h2>{{.Title}}</h2>
-{{if .ArtistDisplay}}<h3>{{.ArtistDisplay}}</h3>{{end}}
-<ul>
-  <li><b>id</b>: {{.ID}}</li>
-  <li><b>artist</b>:
-    {{range $idx, $artRef := .ArtistRefs}}
-      {{if gt $idx 1}},{{end}}
-      <a href="/artists/{{$artRef.ArtistID}}">{{$artRef.Name}}</a>
-    {{end}}
-  </li>
-  <li><b>date</b>: {{.Date}}</li>
-  <li><b>duration</b>: {{.Duration}}</li>
-</ul>
-{{ end }}{{/* END DEFINE */}}
-
-
-{{ define "tracklists" }}
-<table class="album">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Title</th>
-      <th>Duration</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{ range $idx, $tracklist := .Tracklists }}
-      {{ template "tracklist" $tracklist }}
-    {{ end }}
-  </tbody>
-</table>
-{{end}}{{/* END DEFINE */}}
-
-
-{{ define "tracklist" }}
-  {{ if .Title }}
-    <tr class="track-list__title">
-      <td colspan="3">{{ .Title }}</td>
-    </tr>
-  {{ end }}
-
-  {{ if .ArtistDisplay }}{{/* cre_cle_rev_boxed_set_1 */}}
-    <tr class="track-list__artist">
-      <td colspan="3">{{ .ArtistDisplay }}</td>
-    </tr>
-  {{ else if .ArtistRefs }}
-    <tr class="track-list__artist">
-      <td colspan="3">
-        {{ range $idx, $artref := .ArtistRefs }}
-          {{ $artref }} -
-        {{ end }}
-      </td>
-    </tr>
-  {{ end }}
-
-  {{ range $idx, $track := .Tracks }}
-    <tr>
-      <td>{{ sum $idx 1 }}</td>
-      <td>{{ $track.Title }}</td>
-      <td>{{ $track.Duration }}</td>
-    </tr>
-  {{ end }}
-{{ end }}{{/* END DEFINE */}}
+{{define "page-title"}}{{.Album.Title}}{{end}}

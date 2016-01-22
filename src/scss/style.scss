@@ -5,13 +5,4 @@
 @import 'layout';
 @import 'artists-list';
 @import 'artist';
-
-
-// ***************************************************************
-// album
-// ***************************************************************
-
-.album-images img {
-  height: 128px;
-  width: 128px;
-}
+@import 'album';
