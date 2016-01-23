@@ -1,6 +1,9 @@
 package model
 
-import "encoding/xml"
+import (
+	"bytes"
+	"encoding/xml"
+)
 
 // AlbumMap type
 type AlbumMap map[string]*Album
@@ -83,4 +86,22 @@ func (a *Album) Year() string {
 		return ""
 	}
 	return a.Date[:4]
+}
+
+// ArtistName returns the artist name of the album
+func (a *Album) ArtistName() string {
+	if len(a.ArtistDisplay) > 0 {
+		return a.ArtistDisplay
+	}
+
+	var buffer bytes.Buffer
+
+	for i, ar := range a.ArtistRefs {
+		if i > 0 {
+			buffer.WriteString(", ")
+		}
+		buffer.WriteString(ar.Artist.Name)
+	}
+
+	return buffer.String()
 }

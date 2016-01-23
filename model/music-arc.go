@@ -11,10 +11,10 @@ import (
 
 // MusicArc type
 type MusicArc struct {
-	XMLName   xml.Name    `xml:"music-arc"`
-	Artists   Artists     `xml:"artist-list"`
-	Albums    AlbumMap    `xml:"album-list"`
-	Playlists PlaylistMap `xml:"playlist-list"`
+	XMLName   xml.Name  `xml:"music-arc"`
+	Artists   Artists   `xml:"artist-list"`
+	Albums    AlbumMap  `xml:"album-list"`
+	Playlists Playlists `xml:"playlist-list"`
 }
 
 var entities = map[string]string{
@@ -73,6 +73,19 @@ func (ma *MusicArc) postLoad() error {
 	// sort by Date artist.Albums
 	for _, artist := range ma.Artists.List {
 		sort.Sort(byDate(artist.Albums))
+	}
+
+	// init each Playlist.Albums
+	for _, playlist := range ma.Playlists.List {
+		for _, albumID := range playlist.AlbumIDs {
+			// get album by id
+			album, ok := ma.Albums[albumID]
+			if !ok {
+				return fmt.Errorf("Invalid album \"%s\" in playlist \"%s\"\n", albumID, playlist.ID)
+			}
+			// add album to playlist.Albums
+			playlist.Albums = append(playlist.Albums, album)
+		}
 	}
 
 	return nil

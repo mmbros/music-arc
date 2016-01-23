@@ -1,9 +1,18 @@
 package model
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"sort"
+)
+
+// Playlists type
+type Playlists struct {
+	Map  map[string]*Playlist
+	List []*Playlist // ordered by ID
+}
 
 // PlaylistMap type
-type PlaylistMap map[string]*Playlist
+// type PlaylistMap map[string]*Playlist
 
 // Playlist type
 type Playlist struct {
@@ -16,10 +25,12 @@ type Playlist struct {
 	Duration string   `xml:"duration"`
 	Style    string   `xml:"style,attr"`
 	AlbumIDs []string `xml:"list>album-ref"`
+
+	Albums []*Album
 }
 
 // UnmarshalXML function unmarshal an <album-list> XML fragment to a Map[string]*Album
-func (pm *PlaylistMap) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (ps *Playlists) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	// result
 	m := map[string]*Playlist{}
 
@@ -45,6 +56,23 @@ LOOP:
 		}
 	}
 
-	*pm = PlaylistMap(m)
+	// Playlists.List
+	l := make([]*Playlist, len(m))
+	var j int
+	for _, a := range m {
+		l[j] = a
+		j++
+	}
+	sort.Sort(byID(l))
+
+	// result
+	*ps = Playlists{Map: m, List: l}
 	return nil
+
 }
+
+type byID []*Playlist
+
+func (ps byID) Len() int           { return len(ps) }
+func (ps byID) Swap(i, j int)      { ps[i], ps[j] = ps[j], ps[i] }
+func (ps byID) Less(i, j int) bool { return ps[i].ID < ps[j].ID }

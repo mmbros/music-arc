@@ -13,6 +13,7 @@ import (
 
 const urlPrefixAlbums = "/albums/"
 const urlPrefixArtists = "/artists/"
+const urlPrefixPlaylists = "/playlists/"
 
 var gMA *model.MusicArc
 
@@ -21,6 +22,42 @@ type PageData struct {
 	MusicArc *model.MusicArc
 	Artist   *model.Artist
 	Album    *model.Album
+	Playlist *model.Playlist
+}
+
+func viewPlaylistHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("%s: %s\n", r.Method, r.URL.Path)
+
+	// init page data
+	data := PageData{MusicArc: gMA}
+
+	// get the id
+	id := r.URL.Path[len(urlPrefixPlaylists):]
+
+	if len(id) == 0 {
+		// return list of playlists
+		p := templates.PagePlaylistsList
+		if err := p.Execute(w, &data); err != nil {
+			panic(err)
+		}
+		return
+	}
+
+	// get playlist by id
+	playlist := gMA.Playlists.Map[id]
+	if playlist == nil {
+		// error page
+		fmt.Fprintf(w, "Playlist \"%s\" not found!", id)
+		return
+	}
+	data.Playlist = playlist
+
+	// return playlist page detail
+	p := templates.PagePlaylist
+	if err := p.Execute(w, &data); err != nil {
+		panic(err)
+	}
+
 }
 
 func viewAlbumHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +69,7 @@ func viewAlbumHandler(w http.ResponseWriter, r *http.Request) {
 
 	if len(id) == 0 {
 		p := templates.PageAlbumList
-		if err := p.Execute(w, &gMA); err != nil {
+		if err := p.Execute(w, &data.MusicArc); err != nil {
 			panic(err)
 		}
 		return
@@ -95,7 +132,7 @@ func create() {
 func main() {
 	var err error
 
-	create()
+	//	create()
 
 	gMA, err = model.LoadFromXMLFile("data/music-arc-inc.xml")
 	if err != nil {
@@ -108,6 +145,7 @@ func main() {
 	//	http.HandleFunc("/", handler)
 	http.HandleFunc(urlPrefixAlbums, viewAlbumHandler)
 	http.HandleFunc(urlPrefixArtists, viewArtistHandler)
+	http.HandleFunc(urlPrefixPlaylists, viewPlaylistHandler)
 
 	http.Handle("/img/album/", http.StripPrefix("/img/album/", http.FileServer(http.Dir("./data/img"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./dist/css"))))

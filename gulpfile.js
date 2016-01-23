@@ -282,7 +282,7 @@ gulp.task('server:watch', function() {
 
   /* Rebuild and restart application server */
   gulp.watch([
-    '*/**/*.go',
+    '**/*.go',
   ], sync([
     'server:build',
     'server:spawn'
