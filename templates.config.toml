@@ -36,6 +36,7 @@ album_list = ["base", "album-list.tmpl"]
 
 ## Cover
 cover_base = ["cover/_base.tmpl", "bs"]
+cover_front = ["cover_base", "cover/front.tmpl" ]
 cover_front_10 = ["cover_base", "cover/front-10.tmpl" ]
 
 
@@ -47,4 +48,5 @@ ArtistsList = {template="artists_list"}
 PlaylistsList = {template="playlists_list"}
 Playlist = {template="playlist"}
 
+CoverFront = {template="cover_front"}
 CoverFront10 = {template="cover_front_10"}

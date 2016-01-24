@@ -51,7 +51,7 @@ func viewFrontCoverHandler(w http.ResponseWriter, r *http.Request) {
 	data.Playlist = playlist
 
 	// return playlist page detail
-	p := templates.PageCoverFront10
+	p := templates.PageCoverFront
 	if err := p.Execute(w, &data); err != nil {
 		panic(err)
 	}

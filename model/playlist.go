@@ -76,3 +76,11 @@ type byID []*Playlist
 func (ps byID) Len() int           { return len(ps) }
 func (ps byID) Swap(i, j int)      { ps[i], ps[j] = ps[j], ps[i] }
 func (ps byID) Less(i, j int) bool { return ps[i].ID < ps[j].ID }
+
+// Year returns the year of the album
+func (p *Playlist) Year() string {
+	if len(p.Date) < 4 {
+		return ""
+	}
+	return p.Date[:4]
+}
