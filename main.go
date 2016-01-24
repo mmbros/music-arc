@@ -14,6 +14,7 @@ import (
 const urlPrefixAlbums = "/albums/"
 const urlPrefixArtists = "/artists/"
 const urlPrefixPlaylists = "/playlists/"
+const urlPrefixFrontCover = "/front-cover/"
 
 var gMA *model.MusicArc
 
@@ -23,6 +24,38 @@ type PageData struct {
 	Artist   *model.Artist
 	Album    *model.Album
 	Playlist *model.Playlist
+}
+
+func viewFrontCoverHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("%s: %s\n", r.Method, r.URL.Path)
+
+	// init page data
+	data := PageData{MusicArc: gMA}
+
+	// get the id
+	id := r.URL.Path[len(urlPrefixFrontCover):]
+
+	if len(id) == 0 {
+		// error page
+		fmt.Fprintf(w, "Must have a Playlist!")
+		return
+	}
+
+	// get playlist by id
+	playlist := gMA.Playlists.Map[id]
+	if playlist == nil {
+		// error page
+		fmt.Fprintf(w, "Playlist \"%s\" not found!", id)
+		return
+	}
+	data.Playlist = playlist
+
+	// return playlist page detail
+	p := templates.PageCoverFront10
+	if err := p.Execute(w, &data); err != nil {
+		panic(err)
+	}
+
 }
 
 func viewPlaylistHandler(w http.ResponseWriter, r *http.Request) {
@@ -146,6 +179,7 @@ func main() {
 	http.HandleFunc(urlPrefixAlbums, viewAlbumHandler)
 	http.HandleFunc(urlPrefixArtists, viewArtistHandler)
 	http.HandleFunc(urlPrefixPlaylists, viewPlaylistHandler)
+	http.HandleFunc(urlPrefixFrontCover, viewFrontCoverHandler)
 
 	http.Handle("/img/album/", http.StripPrefix("/img/album/", http.FileServer(http.Dir("./data/img"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./dist/css"))))

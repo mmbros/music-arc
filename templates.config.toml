@@ -16,14 +16,16 @@ page_enum_prefix = "Page"
 func_map = "funcMap"
 
 [templates]
+bs = ["_browser-sync.tmpl"]
+
 part_artists = ["partials/artists-list.tmpl"]
 part_artist = ["partials/artist.tmpl"]
 part_album = ["partials/album.tmpl"]
 part_playlists = ["partials/playlists-list.tmpl"]
 part_playlist = ["partials/playlist.tmpl"]
 
-
-base = ["base.tmpl"]
+## Sito
+base = ["_base.tmpl", "bs"]
 artists_list = ["base", "part_artists", "artists-list.tmpl" ]
 artist = ["base", "part_artists", "part_artist", "artist.tmpl"]
 album = ["base", "part_artist", "part_album", "album.tmpl"]
@@ -32,6 +34,11 @@ playlist= ["base", "part_playlists", "part_playlist", "playlist.tmpl" ]
 
 album_list = ["base", "album-list.tmpl"]
 
+## Cover
+cover_base = ["cover/_base.tmpl", "bs"]
+cover_front_10 = ["cover_base", "cover/front-10.tmpl" ]
+
+
 [pages]
 Album = {template="album"}
 AlbumList = {template="album_list"}
@@ -39,3 +46,5 @@ Artist = {template="artist"}
 ArtistsList = {template="artists_list"}
 PlaylistsList = {template="playlists_list"}
 Playlist = {template="playlist"}
+
+CoverFront10 = {template="cover_front_10"}
